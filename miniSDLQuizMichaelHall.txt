@@ -1,0 +1,36 @@
+Mini quiz 2 Software Development Life Cycle (SDLC)
+
+Question 1: What is contained in a Software Requirement Specification (SRS)?
+
+- Design approaches for the product architecture.
+- (Correct) All the product requirements to be designed and developed during the project life cycle.
+- Various technical approaches that can be followed to implement the project successfully with minimum risks.
+- The proposal of the product given from the customer, sales department, market surveys and domain experts in the industry.
+
+Question 2: What does the radius of the spiral at any point represent in the Spiral Model?
+
+- (Correct) Expenses of the project so far
+- Progress made so far in the current phase
+- Flexibility of the project
+- Amount of people working on the project
+
+Question 3: Which of the following is NOT true about the Big Bang Model?
+
+- It is a good learning aid for new comers or students.
+- There is little or no planning required.
+- It is a poor model for long and ongoing projects.
+- (Correct) It is a good model for complex and object-oriented projects.
+
+Question 4: What is another name for the User Story Template?
+
+- User schema
+- (Correct) Connextra format
+- Scrum format
+- Agile schema
+
+Question 5: Which of the following is NOT a goal for agile teams using work in progress (WIP) limits?
+
+- Reduce Idleness
+- Map WIP limits to the team's skills
+- (Correct) Size multiple tasks consistently
+- Protect a sustainable engineering culture
