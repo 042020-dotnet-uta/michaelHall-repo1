@@ -1,0 +1,36 @@
+Mini Quiz on W3: (topics are HTML, CSS, MVC)
+
+Question 1: Which of the following is NOT a font sub-property?
+
+- family
+- weight
+- (Correct) width
+- height
+
+Question 2: What keyword is used to set a CSS property to its default value?
+
+- (Correct) initial
+- default
+- origin
+- inherit
+
+Question 3: Which of the following input types does the 'multiple' attribute work with?
+
+- text and file
+- file and date
+- (Correct) email and file
+- All of the above
+
+Question 4: How many classes can a single element be a part of in html5?
+
+- one
+- none
+- depends on the element
+- (Correct) unlimited
+
+Question 5: Which of the following keywords is NOT a reserved route paramater name when using Controllers or Razor Pages?
+
+- (Correct) about
+- area
+- action
+- handler
