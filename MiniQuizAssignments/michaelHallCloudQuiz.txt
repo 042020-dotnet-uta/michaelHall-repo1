@@ -1,0 +1,36 @@
+Cloud Quiz:
+
+Question 1: Which of the following is possible today with cloud services from a cloud provider?
+
+ - Storing, backing up, and recovering data
+ - Testing and building applications
+ - Streaming audio and video
+ - (Correct) All are possible
+
+Question 2: What is Side-by-side Scaling?
+
+ - Scaling that is performed automatically using an API
+ - (Correct) The process of adding instances for different purposes on demand
+ - The process of adding more instances to a service, system, or application
+ - Scaling a service to run in different geographical locations
+
+Question 3: Which of the following is NOT an application deployment consideration?
+
+ - To build highly available services and applications that can withstand zones becoming unavailable
+ - (Correct) To build remote servers with limited accessibility that can withstand overloading
+ - To build disaster recovery capable applications that can withstand the extended loss of entire regions
+ - All are application deployment considerations
+
+Question 4: Which type of cloud service is the most basic category of cloud computing services?
+
+ - (Correct) IaaS
+ - PaaS
+ - Serverless computing
+ - SaaS
+
+Question 5: Which of the following is NOT a benefit of cloud computing?
+
+ - Productivity
+ - Reliability
+ - (Correct) Simplification
+ - Performance
