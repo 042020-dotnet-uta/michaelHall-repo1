@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using StoreWebApp.Data;
+using StoreWebApp.Data.Repositories;
 using StoreWebApp.Models;
 
 namespace StoreWebApp.Controllers
@@ -45,20 +46,20 @@ namespace StoreWebApp.Controllers
         // GET: Customers
         public async Task<IActionResult> Search(string firstName, string lastName, string userName)
         {
-            var customers = from c in _context.Customers
-                            select c;
+            var query = new CustomerRepo();
+            var customers = query.GetCustomers(_context);
 
             if (!String.IsNullOrEmpty(firstName))
             {
-                customers = customers.Where(s => s.FirstName.Contains(firstName));
+                customers = query.SearchFirstName(customers, firstName);
             }
             if (!String.IsNullOrEmpty(lastName))
             {
-                customers = customers.Where(s => s.FirstName.Contains(lastName));
+                customers = query.SearchLastName(customers, lastName);
             }
             if (!String.IsNullOrEmpty(userName))
             {
-                customers = customers.Where(s => s.FirstName.Contains(userName));
+                customers = query.SearchUserName(customers, userName);
             }
 
             return View(await customers.ToListAsync());

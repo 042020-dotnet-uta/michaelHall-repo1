@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using StoreWebApp.Data;
+using StoreWebApp.Models;
 
-namespace StoreWebApp.Models
+namespace StoreWebApp.Data
 {
     public class SeedData
     {

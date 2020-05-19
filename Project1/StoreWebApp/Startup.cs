@@ -9,7 +9,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using StoreWebApp.Data;
+using StoreWebApp.Data.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace StoreWebApp
 {
@@ -28,8 +30,20 @@ namespace StoreWebApp
             services.AddControllersWithViews();
 
             services.AddDbContext<StoreAppContext>(options => options.UseSqlServer(Configuration.GetConnectionString("StoreAppContext")));
-        
-            
+
+            services.AddScoped<ICustomerRepo, CustomerRepo>();
+            services.AddScoped<IStoreRepo, StoreRepo>();
+            services.AddScoped<IProductRepo, ProductRepo>();
+            services.AddScoped<IOrderRepo, OrderRepo>();
+
+            services.AddLogging(logger =>
+            {
+                Host.CreateDefaultBuilder().ConfigureLogging(logging =>
+                {
+                    logging.ClearProviders();
+                    logging.AddConsole();
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
