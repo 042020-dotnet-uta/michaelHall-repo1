@@ -12,16 +12,18 @@ namespace StoreWebApp.Models
     {
         public int Id { get; set; }
 
-        [Display(Name = "Product")]
+        [Display(Name = "Product ID")]
         [Required]
         public int ProductId { get; set; }
 
-        [Display(Name = "Product(s)")]
+        [Display(Name = "Product")]
         public Product Product { get; set; }
 
-        [Display(Name = "Customer")]
+        [Display(Name = "Customer ID")]
         [Required]
         public int CustomerId { get; set; }
+
+        [Display(Name = "Customer")]
         public Customer Customer { get; set; }
 
         [Display(Name = "Quantity")]

@@ -66,7 +66,7 @@ namespace StoreWebApp.Controllers
         }
 
         // GET: Customers/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> History(int? id)
         {
             if (id == null)
             {

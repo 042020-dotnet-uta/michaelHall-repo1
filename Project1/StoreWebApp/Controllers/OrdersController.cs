@@ -36,10 +36,9 @@ namespace StoreWebApp.Controllers
                 return NotFound();
             }
 
-            var order = await _context.Orders
-                .Include(o => o.Customer)
-                .Include(o => o.Product)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var repo = new OrderRepo();            
+            var order = await repo.GetOrderDetails(_context, (int)id);
+
             if (order == null)
             {
                 return NotFound();
@@ -51,8 +50,8 @@ namespace StoreWebApp.Controllers
         // GET: Orders/Create
         public IActionResult Create()
         {
-            ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "Id");
-            ViewData["ProductId"] = new SelectList(_context.Products, "Id", "Id");
+            ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", dataTextField:"UserName");
+            ViewData["ProductId"] = new SelectList(_context.Products, "Id", "ProductName");
             return View();
         }
 
@@ -64,15 +63,17 @@ namespace StoreWebApp.Controllers
         public async Task<IActionResult> Create([Bind("Id,ProductId,CustomerId,Quantity,Timestamp")] Order order)
         {
             var check = new OrderLogic();
-
-            if (ModelState.IsValid)// && check.IsWithinInventory(order.Product.Inventory, order.Quantity))
+            var products = new ProductRepo();
+            
+            if (ModelState.IsValid && check.IsWithinInventory(products.GetInventory(_context, order.ProductId), order.Quantity))
             {
+                products.UpdateInventory(_context, order.ProductId, order.Quantity);
                 _context.Add(order);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "Id", order.CustomerId);
-            ViewData["ProductId"] = new SelectList(_context.Products, "Id", "Id", order.ProductId);
+            ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "UserName", order.CustomerId);
+            ViewData["ProductId"] = new SelectList(_context.Products, "Id", "ProductName", order.ProductId);
             return View(order);
         }
 

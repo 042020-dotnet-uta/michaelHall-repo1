@@ -10,6 +10,7 @@ namespace StoreWebApp.Data.Repositories
     public interface IOrderRepo
     {
         public IQueryable<Order> GetOrders(StoreAppContext context);
+        public Task<Order> GetOrderDetails(StoreAppContext context, int id);
     }
 
     public class OrderRepo : IOrderRepo
@@ -18,6 +19,15 @@ namespace StoreWebApp.Data.Repositories
         {
             return from o in context.Orders
                    select o;
+        }
+
+        public async Task<Order> GetOrderDetails(StoreAppContext context, int id)
+        {
+            return await context.Orders
+                .Where(o => o.Id == id)
+                .Include(o => o.Customer)
+                .Include(o => o.Product)
+                .FirstOrDefaultAsync();
         }
     }
 }

@@ -12,6 +12,8 @@ namespace StoreWebApp.Models
         public int Id { get; set; }
         public int StoreId { get; set; }
         public Store Store { get; set; }
+
+        [Display(Name = "Product")]
         public string ProductName { get; set; }
         public int Inventory { get; set; }
 
