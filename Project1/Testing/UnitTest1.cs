@@ -5,7 +5,7 @@ using StoreWebApp;
 using StoreWebApp.Data;
 using StoreWebApp.Models;
 using Microsoft.EntityFrameworkCore;
-
+using StoreWebApp.Business_Logic;
 
 namespace Testing
 {
@@ -148,7 +148,6 @@ namespace Testing
                     CustomerId = 5,
                     ProductId = 10,
                     Quantity = 3,
-                    Timestamp = DateTime.Today
                 };
 
                 db.Add(location);
@@ -165,8 +164,30 @@ namespace Testing
                 Assert.Equal(5, order1.CustomerId);
                 Assert.Equal(10, order1.ProductId);
                 Assert.Equal(3, order1.Quantity);
-                Assert.Equal(DateTime.Today, order1.Timestamp);
             }
+        }
+
+        [Fact]
+        public void IsWithinInventoryTest()
+        {
+            //Arrange
+            var check = new OrderLogic();
+
+            //Act
+            int inv1 = 20;
+            int inv2 = 40;
+            int quant1 = 30;
+            int quant2 = 60;
+            int quant3 = 10;
+
+            //Assert
+            Assert.False(check.IsWithinInventory(inv1, quant1));
+            Assert.False(check.IsWithinInventory(inv1, quant2));
+            Assert.True(check.IsWithinInventory(inv1, quant3));
+
+            Assert.True(check.IsWithinInventory(inv2, quant1));
+            Assert.False(check.IsWithinInventory(inv2, quant2));
+            Assert.True(check.IsWithinInventory(inv2, quant3));
         }
 
         /*

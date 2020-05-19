@@ -5,7 +5,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using StoreWebApp.Business_Logic;
 using StoreWebApp.Data;
+using StoreWebApp.Data.Repositories;
 using StoreWebApp.Models;
 
 namespace StoreWebApp.Controllers
@@ -61,7 +63,9 @@ namespace StoreWebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,ProductId,CustomerId,Quantity,Timestamp")] Order order)
         {
-            if (ModelState.IsValid)
+            var check = new OrderLogic();
+
+            if (ModelState.IsValid)// && check.IsWithinInventory(order.Product.Inventory, order.Quantity))
             {
                 _context.Add(order);
                 await _context.SaveChangesAsync();
