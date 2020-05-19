@@ -1,0 +1,36 @@
+Service Oriented Architecture Quiz:
+
+Question 1: Which of the following is NOT a true statement?
+
+ - A service logically represents a business activity with a specified outcome
+ - (Correct) A service can only consist of one service
+ - A service is self-contained
+ - A service is a black box for its consumers
+
+Question 2: Which of the following is NOT a potential role of an SOA building block?
+
+ - Service provider
+ - Service broker
+ - (Correct) Service leader
+ - Service consumer
+
+Question 3: Which of the following practices can be seen as offspring of SOA?
+
+ - Mashups
+ - SaaS
+ - Cloud computing
+ - (Correct) All of them
+
+Question 4: What does the phrase 'web service' imply?
+
+ - (Correct) The transmission of data in a text-based format
+ - The exchange of data in a format that is associated with a particular computer language
+ - The avoidance of maintaining configuration files
+ - The reduction of accessibility
+
+Question 5: What term means the ability of a company to respond quickly and well to change?
+
+ - Capacity
+ - (Correct) Agility
+ - Responsibility
+ - Velocity
