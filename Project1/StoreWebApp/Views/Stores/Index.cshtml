@@ -1,15 +1,15 @@
 ﻿@model IEnumerable<StoreWebApp.Models.Product>
 
 @{
-    ViewData["Title"] = "Store Index";
+    ViewData["Title"] = "Store Page";
 }
 
-<h1>Store Index</h1>
+<h1>Stores</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Index">Add a new store</a>
 </p>
-<table class="table">
+<table class="table text-white">
     <thead>
         <tr>
             <th>
@@ -42,22 +42,27 @@
                     <td></td>
                     <td></td>
                     <td>
-                        <a asp-action="History" asp-route-id="@item.Store.Id">Order History</a>
+                        <a asp-action="History" asp-route-id="@item.Store.Id">Order History</a> |
+                        <a asp-action="Index">Add Product</a>
                     </td>
                 </tr>
             }
-            <tr>
-                <td></td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ProductName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Inventory)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Price)
-                </td>
-            </tr>
+    <tr>
+        <td></td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ProductName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Inventory)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Price)
+        </td>
+        <td>
+            <a asp-action="Index">Edit</a> |
+            <a asp-action="Index">Delete</a>
+        </td>
+    </tr>
         }
     </tbody>
 </table>

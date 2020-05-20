@@ -1,15 +1,30 @@
 ﻿@model IEnumerable<StoreWebApp.Models.Order>
 
 @{
-    ViewData["Title"] = "Store History";
+    ViewData["Title"] = "Store Order History";
 }
 
-<h1>
-    Store
-    History
-</h1>
+@{ int index = 1;}
+@foreach (var item in Model)
+{
+    if (index == 1)
+    {
+        <h1>
+            Order History for 
+            @Html.DisplayFor(modelItem => item.Product.Store.Location)
+        </h1>
+    }
+    index++;
+}
 
-<table class="table">
+@if (index == 1)
+{
+    <h1>
+        Store Order History
+    </h1>
+}
+
+<table class="table text-white">
     <thead>
         <tr>
             <th>
@@ -34,8 +49,10 @@
         </tr>
     </thead>
     <tbody>
+        @{ int count = 0;}
         @foreach (var item in Model)
         {
+            count++;
             <tr>
                 <td>
                     @Html.DisplayFor(modelItem => item.Customer.FirstName)
@@ -58,5 +75,16 @@
                 </td>
             </tr>
         }
+
+        @if (count == 0)
+        {
+            <tr>
+                This store has not had any orders placed yet.
+            </tr>
+        }
     </tbody>
 </table>
+
+<div>
+    <a asp-action="Index">Back to Store Page</a>
+</div>

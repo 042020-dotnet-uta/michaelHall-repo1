@@ -29,14 +29,56 @@ namespace StoreWebApp.Controllers
         }
 
         // GET: Stores
+        /// <summary>
+        /// Default page for Stores which returns the view for 
+        /// listing out all the store and product info associated with it
+        /// </summary>
+        /// <returns></returns>
         public async Task<IActionResult> Index()
         {
-            var repo = new ProductRepo();
-            var storeData = await repo.GetProductData(_context);
-            
-            return View(storeData);
+            try
+            {
+                var repo = new ProductRepo();
+                var storeData = await repo.GetProductData(_context);
+
+                return View(storeData);
+            }
+            catch(Exception ex)
+            {
+                _logger.LogInformation(ex, "Wasn't able to get the product/store data");
+                return RedirectToAction("Index", new { area = "Home" });
+            }
         }
 
+        // GET: Stores/History/5
+        /// <summary>
+        /// Gets all the order history for a particular store and returns
+        /// the view displaying said history data
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<IActionResult> History(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+            
+            try
+            {
+                var repo = new StoreRepo();
+                var storeHistory = await repo.GetStoreHistory(_context, (int)id);
+
+                return View(storeHistory);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInformation(ex, "Wasn't able to obtain the store's order history");
+                return RedirectToAction(nameof(Index));
+            }
+        }
+
+        /*
         // GET: Stores/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -156,25 +198,11 @@ namespace StoreWebApp.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+        */
 
         private bool StoreExists(int id)
         {
             return _context.Stores.Any(e => e.Id == id);
-        }
-
-
-        // GET: Stores/Details/5
-        public async Task<IActionResult> History(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var repo = new StoreRepo();
-            var storeHistory = await repo.GetStoreHistory(_context, (int)id);
-
-            return View(storeHistory);
         }
     }
 }
