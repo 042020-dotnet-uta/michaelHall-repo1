@@ -1,10 +1,10 @@
-﻿@model IEnumerable<StoreWebApp.Models.Store>
+﻿@model IEnumerable<StoreWebApp.Models.Product>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Store Index";
 }
 
-<h1>Index</h1>
+<h1>Store Index</h1>
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -13,23 +13,51 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Location)
+                @Html.DisplayNameFor(model => model.Store.Location)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ProductName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Inventory)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Price)
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Location)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
+        @{ int newStore = 0;}
+        @foreach (var item in Model)
+        {
+            @if (item.Store.Id != newStore)
+            {
+                newStore = item.Store.Id;
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Store.Location)
+                    </td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>
+                        <a asp-action="History" asp-route-id="@item.Store.Id">Order History</a>
+                    </td>
+                </tr>
+            }
+            <tr>
+                <td></td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ProductName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Inventory)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Price)
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

@@ -73,14 +73,10 @@ namespace StoreWebApp.Controllers
                 return NotFound();
             }
 
-            var customer = await _context.Customers
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (customer == null)
-            {
-                return NotFound();
-            }
+            var repo = new CustomerRepo();
+            var customerHistory = await repo.GetCustomerHistory(_context, (int)id);
 
-            return View(customer);
+            return View(customerHistory);
         }
 
         // GET: Customers/Create

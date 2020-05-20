@@ -17,6 +17,7 @@ namespace StoreWebApp.Models
         public string ProductName { get; set; }
         public int Inventory { get; set; }
 
+        [Display(Name = "Price")]
         [Column(TypeName ="decimal(18, 2)")]
         public decimal Price { get; set; }
         public ICollection<Order> Orders { get; set; }

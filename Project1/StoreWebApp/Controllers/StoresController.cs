@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using StoreWebApp.Data;
 using StoreWebApp.Models;
+using StoreWebApp.Data.Repositories;
 
 namespace StoreWebApp.Controllers
 {
@@ -22,7 +23,10 @@ namespace StoreWebApp.Controllers
         // GET: Stores
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Stores.ToListAsync());
+            var repo = new ProductRepo();
+            var storeData = await repo.GetProductData(_context);
+            
+            return View(storeData);
         }
 
         // GET: Stores/Details/5
@@ -159,14 +163,10 @@ namespace StoreWebApp.Controllers
                 return NotFound();
             }
 
-            var store = await _context.Stores
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (store == null)
-            {
-                return NotFound();
-            }
+            var repo = new StoreRepo();
+            var storeHistory = await repo.GetStoreHistory(_context, (int)id);
 
-            return View(store);
+            return View(storeHistory);
         }
     }
 }

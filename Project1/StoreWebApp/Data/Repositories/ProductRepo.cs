@@ -13,6 +13,7 @@ namespace StoreWebApp.Data.Repositories
         public IQueryable<Product> GetProducts(StoreAppContext context);
         public int GetInventory(StoreAppContext context, int id);
         public void UpdateInventory(StoreAppContext context, int id, int quant);
+        public Task<IEnumerable<Product>> GetProductData(StoreAppContext context);
     }
 
     public class ProductRepo : IProductRepo
@@ -38,6 +39,14 @@ namespace StoreWebApp.Data.Repositories
                 .FirstOrDefault();
             product.Inventory -= quant;
             context.SaveChanges();
+        }
+
+        public async Task<IEnumerable<Product>> GetProductData(StoreAppContext context)
+        {
+            return await context.Products
+                .Include(p => p.Store)
+                .OrderBy(p => p.Store.Id)
+                .ToListAsync();
         }
     }
 }
