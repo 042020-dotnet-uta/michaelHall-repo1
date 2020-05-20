@@ -38,5 +38,7 @@ namespace StoreWebApp.Models
             get { return timestamp; }
             set {; }
         }
+
+        //public int OrderLine { get; set; }
     }
 }

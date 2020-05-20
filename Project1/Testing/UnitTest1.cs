@@ -6,12 +6,13 @@ using StoreWebApp.Data;
 using StoreWebApp.Models;
 using Microsoft.EntityFrameworkCore;
 using StoreWebApp.Business_Logic;
+using StoreWebApp.Data.Repositories;
 
 namespace Testing
 {
     public class UnitTesting
     {
-        
+
         /// <summary>
         /// Tests the product model by adding to it and
         /// verifying that the products and their details show up in the database
@@ -51,7 +52,7 @@ namespace Testing
             }
         }
 
-        
+
         /// <summary>
         /// Tests the store model by adding to it and
         /// verifying that the stores and their details show up in the database
@@ -167,6 +168,9 @@ namespace Testing
             }
         }
 
+        /// <summary>
+        /// Tests the inventory check for verifying that orders do not exceed it
+        /// </summary>
         [Fact]
         public void IsWithinInventoryTest()
         {
@@ -190,157 +194,667 @@ namespace Testing
             Assert.True(check.IsWithinInventory(inv2, quant3));
         }
 
-        /*
         /// <summary>
-        /// Tests the IsValidName method to make sure it works properly
+        /// Tests the GetCustomers method
         /// </summary>
         [Fact]
-        public void ValidNameTest()
-        {
-            // arrange
-            CustomerCreation validation = new CustomerCreation();
-
-            // act
-            string nameTest1 = "Mike";
-            string nameTest2 = "4after";
-            string nameTest3 = "after@dark";
-
-            // assert
-            Assert.True(validation.IsValidName(nameTest1));
-            Assert.False(validation.IsValidName(nameTest2));
-            Assert.False(validation.IsValidName(nameTest3));
-        }
-
-        /// <summary>
-        /// Tests the IsValidUserName method to make sure it works properly
-        /// </summary>
-        [Fact]
-        public void ValidUserNameTest()
-        {
-            // arrange
-            CustomerCreation validation = new CustomerCreation();
-
-            // act
-            string usernameTest1 = "72838meah";
-            string usernameTest2 = "pie";
-            string usernameTest3 = "pie@2019withme";
-
-            // assert
-            Assert.True(validation.IsValidUserName(usernameTest1));
-            Assert.True(validation.IsValidUserName(usernameTest2));
-            Assert.False(validation.IsValidUserName(usernameTest3));
-        }
-
-        /// <summary>
-        /// Tests the IsValidNum method to make sure it works properly
-        /// </summary>
-        [Fact]
-        public void ValidNumTests()
-        {
-            // arrange
-            OrderCreation test = new OrderCreation();
-
-            // act
-            string validNum1 = "Mike";
-            string validNum2 = "32";
-
-            // assert
-            Assert.False(test.IsValidNum(validNum1));
-            Assert.True(test.IsValidNum(validNum2));
-        }
-
-        /// <summary>
-        /// Tests the StringToInt method to make sure it works properly
-        /// </summary>
-        [Fact]
-        public void StringToIntTests()
-        {
-            // arrange
-            OrderCreation test = new OrderCreation();
-
-            // act
-            string stringToInt1 = "45";
-            string stringToInt2 = "word";
-            string stringToInt3 = "273";
-
-            // assert
-            Assert.Equal(45, test.StringToInt(stringToInt1));
-            Assert.Equal(0, test.StringToInt(stringToInt2));
-            Assert.Equal(273, test.StringToInt(stringToInt3));
-        }
-
-        /// <summary>
-        /// Tests the IsUnreasonableQuantity method to make sure it works properly
-        /// </summary>
-        [Fact]
-        public void UnreasonableOrderTest()
-        {
-            // arrange
-            OrderCreation test = new OrderCreation();
-
-            // act
-            int unreasonable1 = 25;
-            int unreasonable2 = 5;
-
-            // assert
-            Assert.True(test.IsUnreasonableQuantity(unreasonable1));
-            Assert.False(test.IsUnreasonableQuantity(unreasonable2));
-        }
-
-        /// <summary>
-        /// Tests the CustomerSearch method to make sure it works with an exception
-        /// where the exception is that there is no customer table/data
-        /// </summary>
-        [Fact]
-        public void CustomerQueryExceptionTest()
-        {
-            // arrange
-            var options = new DbContextOptionsBuilder<StoreApp_DbContext>()
-                .UseInMemoryDatabase(databaseName: "CustomerQueryExceptionTest")
-                .Options;
-            CustomerQueries check = new CustomerQueries();
-
-            // assert
-            check.CustomerSearch("yes", "no");
-        }
-
-        /// <summary>
-        /// Tests the IsValidCustomerID method query to make sure it works properly
-        /// and without a table/data for an exception
-        /// </summary>
-        [Fact]
-        public void ValidCustomerIDQueryTest()
+        public void GetCustomersTest()
         {
             //Arrange
-            var options = new DbContextOptionsBuilder<StoreApp_DbContext>()
-                .UseInMemoryDatabase(databaseName: "CustomerQueriesTests")
+            var options = new DbContextOptionsBuilder<StoreAppContext>()
+                .UseInMemoryDatabase(databaseName: "GetCustomersTest")
                 .Options;
 
             //Act
-            using (var db = new StoreApp_DbContext(options))
+            using (var db = new StoreAppContext(options))
             {
-                Customer customer = new Customer
+                Customer location = new Customer
                 {
                     FirstName = "Michael",
                     LastName = "Hall",
-                    UserName = "mbhall"
+                    UserName = "mbhall",
+                    Password = "yes"
                 };
 
-                db.Add(customer);
+                db.Add(location);
                 db.SaveChanges();
             }
 
             //Assert
-            using (var context = new StoreApp_DbContext(options))
+            using (var context = new StoreAppContext(options))
             {
-                Assert.Equal(1, context.Customers.Count());
-                CustomerQueries check = new CustomerQueries();
+                var repo = new CustomerRepo();
+                var customers = repo.GetCustomers(context);
+                Assert.Equal(1, customers.Count());
 
-                Assert.False(check.IsValidCustomerID(1));
-                Assert.False(check.IsValidCustomerID(2));
-                Assert.False(check.IsValidCustomerID(-5));
+                var customer1 = customers.Where(c => c.Id == 1).FirstOrDefault();
+                Assert.Equal(1, customer1.Id);
+                Assert.Equal("Michael", customer1.FirstName);
+                Assert.Equal("Hall", customer1.LastName);
+                Assert.Equal("mbhall", customer1.UserName);
+                Assert.Equal("yes", customer1.Password);
             }
         }
-        */
+
+        /// <summary>
+        /// Tests the SearchFirstName method
+        /// </summary>
+        [Fact]
+        public void SearchFirstNameTest()
+        {
+            //Arrange
+            var options = new DbContextOptionsBuilder<StoreAppContext>()
+                .UseInMemoryDatabase(databaseName: "SearchFirstNameTest")
+                .Options;
+
+            //Act
+            using (var db = new StoreAppContext(options))
+            {
+                Customer location = new Customer
+                {
+                    FirstName = "Michael",
+                    LastName = "Hall",
+                    UserName = "mbhall",
+                    Password = "yes"
+                };
+
+                db.Add(location);
+                db.SaveChanges();
+            }
+
+            //Assert
+            using (var context = new StoreAppContext(options))
+            {
+                var repo = new CustomerRepo();
+                var customers = repo.GetCustomers(context);
+                var filter = repo.SearchFirstName(customers, "Mi");
+                Assert.Equal(1, filter.Count());
+
+                var customer1 = filter.Where(c => c.Id == 1).FirstOrDefault();
+                Assert.Equal(1, customer1.Id);
+                Assert.Equal("Michael", customer1.FirstName);
+                Assert.Equal("Hall", customer1.LastName);
+                Assert.Equal("mbhall", customer1.UserName);
+                Assert.Equal("yes", customer1.Password);
+            }
+        }
+
+        /// <summary>
+        /// Tests the SearchLastName method
+        /// </summary>
+        [Fact]
+        public void SearchLastNameTest()
+        {
+            //Arrange
+            var options = new DbContextOptionsBuilder<StoreAppContext>()
+                .UseInMemoryDatabase(databaseName: "SearchLastNameTest")
+                .Options;
+
+            //Act
+            using (var db = new StoreAppContext(options))
+            {
+                Customer location = new Customer
+                {
+                    FirstName = "Michael",
+                    LastName = "Hall",
+                    UserName = "mbhall",
+                    Password = "yes"
+                };
+
+                db.Add(location);
+                db.SaveChanges();
+            }
+
+            //Assert
+            using (var context = new StoreAppContext(options))
+            {
+                var repo = new CustomerRepo();
+                var customers = repo.GetCustomers(context);
+                var filter = repo.SearchLastName(customers, "Ha");
+                Assert.Equal(1, filter.Count());
+
+                var customer1 = filter.Where(c => c.Id == 1).FirstOrDefault();
+                Assert.Equal(1, customer1.Id);
+                Assert.Equal("Michael", customer1.FirstName);
+                Assert.Equal("Hall", customer1.LastName);
+                Assert.Equal("mbhall", customer1.UserName);
+                Assert.Equal("yes", customer1.Password);
+            }
+        }
+
+        /// <summary>
+        /// Tests the GetOrders method
+        /// </summary>
+        [Fact]
+        public void GetOrdersTest()
+        {
+            //Arrange
+            var options = new DbContextOptionsBuilder<StoreAppContext>()
+                .UseInMemoryDatabase(databaseName: "GetOrdersTest")
+                .Options;
+
+            //Act
+            using (var db = new StoreAppContext(options))
+            {
+                Order location = new Order
+                {
+                    CustomerId = 5,
+                    ProductId = 10,
+                    Quantity = 3,
+                };
+
+                db.Add(location);
+                db.SaveChanges();
+            }
+
+            //Assert
+            using (var context = new StoreAppContext(options))
+            {
+                var repo = new OrderRepo();
+                var orders = repo.GetOrders(context);
+                Assert.Equal(1, orders.Count());
+
+                var order1 = context.Orders.Where(o => o.Id == 1).FirstOrDefault();
+                Assert.Equal(1, order1.Id);
+                Assert.Equal(5, order1.CustomerId);
+                Assert.Equal(10, order1.ProductId);
+                Assert.Equal(3, order1.Quantity);
+            }
+        }
+
+        /// <summary>
+        /// Tests the GetOrderDetails method
+        /// </summary>
+        [Fact]
+        public void GetOrderDetailTest()
+        {
+            //Arrange
+            var options = new DbContextOptionsBuilder<StoreAppContext>()
+                .UseInMemoryDatabase(databaseName: "GetOrderDetailTest")
+                .Options;
+
+            //Act
+            using (var db = new StoreAppContext(options))
+            {
+                Store location = new Store
+                {
+                    Location = "Maryland"
+                };
+
+                db.Add(location);
+                db.SaveChanges();
+
+                Customer customer = new Customer
+                {
+                    FirstName = "Michael",
+                    LastName = "Hall",
+                    UserName = "mbhall",
+                    Password = "yes"
+                };
+
+                db.Add(customer);
+                db.SaveChanges();
+
+                Product product = new Product
+                {
+                    StoreId = 1,
+                    ProductName = "bar",
+                    Inventory = 5,
+                    Price = 10
+                };
+
+                db.Add(product);
+                db.SaveChanges();
+
+                Order order = new Order
+                {
+                    CustomerId = 1,
+                    ProductId = 1,
+                    Quantity = 3,
+                };
+
+                db.Add(order);
+                db.SaveChanges();
+            }
+
+            //Assert
+            using (var context = new StoreAppContext(options))
+            {
+                var repo = new OrderRepo();
+                var orderTest = repo.GetOrderDetails(context, 1);
+
+                Assert.Equal(1, orderTest.Id);
+            }
+        }
+
+        /// <summary>
+        /// Tests the GetCustomerHistory method
+        /// </summary>
+        [Fact]
+        public void GetCustomerHistoryTest()
+        {
+            //Arrange
+            var options = new DbContextOptionsBuilder<StoreAppContext>()
+                .UseInMemoryDatabase(databaseName: "GetCustomerHistoryTest")
+                .Options;
+
+            //Act
+            using (var db = new StoreAppContext(options))
+            {
+                Store location = new Store
+                {
+                    Location = "Maryland"
+                };
+
+                db.Add(location);
+                db.SaveChanges();
+
+                Customer customer = new Customer
+                {
+                    FirstName = "Michael",
+                    LastName = "Hall",
+                    UserName = "mbhall",
+                    Password = "yes"
+                };
+
+                db.Add(customer);
+                db.SaveChanges();
+
+                Product product = new Product
+                {
+                    StoreId = 1,
+                    ProductName = "bar",
+                    Inventory = 5,
+                    Price = 10
+                };
+
+                db.Add(product);
+                db.SaveChanges();
+
+                Order order = new Order
+                {
+                    CustomerId = 1,
+                    ProductId = 1,
+                    Quantity = 3,
+                };
+
+                db.Add(order);
+                db.SaveChanges();
+            }
+
+            //Assert
+            using (var context = new StoreAppContext(options))
+            {
+                var repo = new CustomerRepo();
+                var customer1 = repo.GetCustomerHistory(context, 1);
+            }
+        }
+
+        /// <summary>
+        /// Tests the GetProducts method
+        /// </summary>
+        [Fact]
+        public void GetProductsTest()
+        {
+            //Arrange
+            var options = new DbContextOptionsBuilder<StoreAppContext>()
+                .UseInMemoryDatabase(databaseName: "GetProductsTest")
+                .Options;
+
+            //Act
+            using (var db = new StoreAppContext(options))
+            {
+                Product product = new Product
+                {
+                    StoreId = 1,
+                    ProductName = "bar",
+                    Inventory = 5,
+                    Price = 10
+                };
+
+                db.Add(product);
+                db.SaveChanges();
+            }
+
+            //Assert
+            using (var context = new StoreAppContext(options))
+            {
+                var repo = new ProductRepo();
+                var products = repo.GetProducts(context);
+                Assert.Equal(1, products.Count());
+
+                var product1 = context.Products.Where(p => p.Id == 1).FirstOrDefault();
+                Assert.Equal(1, product1.StoreId);
+                Assert.Equal(1, product1.Id);
+            }
+        }
+
+        /// <summary>
+        /// Tests the GetInventory method
+        /// </summary>
+        [Fact]
+        public void GetInventoryTest()
+        {
+            //Arrange
+            var options = new DbContextOptionsBuilder<StoreAppContext>()
+                .UseInMemoryDatabase(databaseName: "GetInventoryTest")
+                .Options;
+
+            //Act
+            using (var db = new StoreAppContext(options))
+            {
+                Product product = new Product
+                {
+                    StoreId = 1,
+                    ProductName = "bar",
+                    Inventory = 5,
+                    Price = 10
+                };
+
+                db.Add(product);
+                db.SaveChanges();
+            }
+
+            //Assert
+            using (var context = new StoreAppContext(options))
+            {
+                var repo = new ProductRepo();
+                int inventory = repo.GetInventory(context, 1);
+
+                Assert.Equal(5, inventory);
+            }
+        }
+
+        /// <summary>
+        /// Tests the UpdateInventory method
+        /// </summary>
+        [Fact]
+        public void UpdateInventoryTest()
+        {
+            //Arrange
+            var options = new DbContextOptionsBuilder<StoreAppContext>()
+                .UseInMemoryDatabase(databaseName: "UpdateInventoryTest")
+                .Options;
+
+            //Act
+            using (var db = new StoreAppContext(options))
+            {
+                Product product = new Product
+                {
+                    StoreId = 1,
+                    ProductName = "bar",
+                    Inventory = 5,
+                    Price = 10
+                };
+
+                db.Add(product);
+                db.SaveChanges();
+            }
+
+            //Assert
+            using (var context = new StoreAppContext(options))
+            {
+                var repo = new ProductRepo();
+                var product1 = context.Products.Where(p => p.StoreId == 1).FirstOrDefault();
+
+                Assert.Equal(5, product1.Inventory);
+
+                repo.UpdateInventory(context, 1, 3);
+                Assert.Equal(2, product1.Inventory);
+            }
+        }
+
+        /// <summary>
+        /// Tests the GetProductData method
+        /// </summary>
+        [Fact]
+        public void GetProductDataTest()
+        {
+            //Arrange
+            var options = new DbContextOptionsBuilder<StoreAppContext>()
+                .UseInMemoryDatabase(databaseName: "GetProductDataTest")
+                .Options;
+
+            //Act
+            using (var db = new StoreAppContext(options))
+            {
+                Store location = new Store
+                {
+                    Location = "Maryland"
+                };
+
+                db.Add(location);
+                db.SaveChanges();
+
+                Product product = new Product
+                {
+                    StoreId = 1,
+                    ProductName = "bar",
+                    Inventory = 5,
+                    Price = 10
+                };
+
+                db.Add(product);
+                db.SaveChanges();
+            }
+
+            //Assert
+            using (var context = new StoreAppContext(options))
+            {
+                var repo = new ProductRepo();
+                var product1 = repo.GetProductData(context);
+            }
+        }
+
+        /// <summary>
+        /// Tests the GetStores method
+        /// </summary>
+        [Fact]
+        public void GetStoresTest()
+        {
+            //Arrange
+            var options = new DbContextOptionsBuilder<StoreAppContext>()
+                .UseInMemoryDatabase(databaseName: "GetStoresTest")
+                .Options;
+
+            //Act
+            using (var db = new StoreAppContext(options))
+            {
+                Store location = new Store
+                {
+                    Location = "Maryland"
+                };
+
+                db.Add(location);
+                db.SaveChanges();
+            }
+
+            //Assert
+            using (var context = new StoreAppContext(options))
+            {
+                var repo = new StoreRepo();
+                var products = repo.GetStores(context);
+                Assert.Equal(1, products.Count());
+
+                var store1 = context.Stores.Where(s => s.Id == 1).FirstOrDefault();
+                Assert.Equal(1, store1.Id);
+                Assert.Equal("Maryland", store1.Location);
+            }
+        }
+
+        /// <summary>
+        /// Tests the GetStoreHistory method
+        /// </summary>
+        [Fact]
+        public void GetStoreHistoryTest()
+        {
+            //Arrange
+            var options = new DbContextOptionsBuilder<StoreAppContext>()
+                .UseInMemoryDatabase(databaseName: "GetStoreHistoryTest")
+                .Options;
+
+            //Act
+            using (var db = new StoreAppContext(options))
+            {
+                Store location = new Store
+                {
+                    Location = "Maryland"
+                };
+
+                db.Add(location);
+                db.SaveChanges();
+
+                Customer customer = new Customer
+                {
+                    FirstName = "Michael",
+                    LastName = "Hall",
+                    UserName = "mbhall",
+                    Password = "yes"
+                };
+
+                db.Add(customer);
+                db.SaveChanges();
+
+                Product product = new Product
+                {
+                    StoreId = 1,
+                    ProductName = "bar",
+                    Inventory = 5,
+                    Price = 10
+                };
+
+                db.Add(product);
+                db.SaveChanges();
+
+                Order order = new Order
+                {
+                    CustomerId = 1,
+                    ProductId = 1,
+                    Quantity = 3,
+                };
+
+                db.Add(order);
+                db.SaveChanges();
+            }
+
+            //Assert
+            using (var context = new StoreAppContext(options))
+            {  
+                var repo = new StoreRepo();
+                var products = repo.GetStoreHistory(context, 1);
+            }
+        }
+
+        /// <summary>
+        /// Tests an exception for querying customers
+        /// </summary>
+        [Fact]
+        public void CustomerQueryExceptionTest()
+        {
+            //Arrange
+            var options = new DbContextOptionsBuilder<StoreAppContext>()
+                .UseInMemoryDatabase(databaseName: "CustomerQueryExceptionTest")
+                .Options;
+
+            //Act
+            // try it with nothing in database
+
+            //Assert
+            using (var context = new StoreAppContext(options))
+            {
+                try
+                {
+                    var customer1 = context.Customers.Where(c => c.Id == 1).FirstOrDefault();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Tests an exception for querying orders
+        /// </summary>
+        [Fact]
+        public void OrderQueryExceptionTest()
+        {
+            //Arrange
+            var options = new DbContextOptionsBuilder<StoreAppContext>()
+                .UseInMemoryDatabase(databaseName: "OrderQueryExceptionTest")
+                .Options;
+
+            //Act
+            // try it with nothing in database
+
+            //Assert
+            using (var context = new StoreAppContext(options))
+            {
+                try
+                {
+                    var order1 = context.Orders.Where(o => o.Id == 1).FirstOrDefault();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Tests an exception for querying products
+        /// </summary>
+        [Fact]
+        public void ProductQueryExceptionTest()
+        {
+            //Arrange
+            var options = new DbContextOptionsBuilder<StoreAppContext>()
+                .UseInMemoryDatabase(databaseName: "ProductQueryExceptionTest")
+                .Options;
+
+            //Act
+            // try it with nothing in database
+
+            //Assert
+            using (var context = new StoreAppContext(options))
+            {
+                try
+                {
+                    var product1 = context.Products.Where(p => p.Id == 1).FirstOrDefault();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Tests an exception for querying stores
+        /// </summary>
+        [Fact]
+        public void StoreQueryExceptionTest()
+        {
+            //Arrange
+            var options = new DbContextOptionsBuilder<StoreAppContext>()
+                .UseInMemoryDatabase(databaseName: "StoreQueryExceptionTest")
+                .Options;
+
+            //Act
+            // try it with nothing in database
+
+            //Assert
+            using (var context = new StoreAppContext(options))
+            {
+                try
+                {
+                    var store1 = context.Stores.Where(s => s.Id == 1).FirstOrDefault();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                }
+            }
+        }
     }
 }
