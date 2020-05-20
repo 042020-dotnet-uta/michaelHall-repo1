@@ -15,7 +15,7 @@ namespace StoreWebApp.Business_Logic
         /// <returns></returns>
         public bool IsWithinInventory(int inventory, int quantity)
         {
-            if (inventory > quantity)
+            if (inventory >= quantity)
             {
                 return true;
             }
