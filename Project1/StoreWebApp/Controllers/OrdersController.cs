@@ -9,16 +9,24 @@ using StoreWebApp.Business_Logic;
 using StoreWebApp.Data;
 using StoreWebApp.Data.Repositories;
 using StoreWebApp.Models;
+using Microsoft.Extensions.Logging;
 
 namespace StoreWebApp.Controllers
 {
     public class OrdersController : Controller
     {
         private readonly StoreAppContext _context;
+        private readonly ILogger<OrdersController> _logger;
 
-        public OrdersController(StoreAppContext context)
+        /// <summary>
+        /// Constructor for setting up the DB context and logger within the controller
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="logger"></param>
+        public OrdersController(StoreAppContext context, ILogger<OrdersController> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         // GET: Orders

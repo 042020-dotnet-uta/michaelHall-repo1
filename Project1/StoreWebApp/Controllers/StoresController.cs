@@ -17,6 +17,11 @@ namespace StoreWebApp.Controllers
         private readonly StoreAppContext _context;
         private readonly ILogger<StoresController> _logger;
 
+        /// <summary>
+        /// Constructor for setting up the DB context and logger within the controller
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="logger"></param>
         public StoresController(StoreAppContext context, ILogger<StoresController> logger)
         {
             _context = context;

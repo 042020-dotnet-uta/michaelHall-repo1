@@ -11,6 +11,10 @@ namespace StoreWebApp.Data
 {
     public class SeedData
     {
+        /// <summary>
+        /// Seeds the database if there is no data already within it
+        /// </summary>
+        /// <param name="serviceProvider"></param>
         public static void Initialize(IServiceProvider serviceProvider)
         {
             using (var context = new StoreAppContext(

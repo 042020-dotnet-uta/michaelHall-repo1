@@ -18,12 +18,24 @@ namespace StoreWebApp.Data.Repositories
 
     public class ProductRepo : IProductRepo
     {
+        /// <summary>
+        /// Get all the products in the DB
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
         public IQueryable<Product> GetProducts(StoreAppContext context)
         {
             return from p in context.Products
                    select p;
         }
 
+        /// <summary>
+        /// Get the inventory for a particular product found
+        /// using the incoming id
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public int GetInventory(StoreAppContext context, int id)
         {
             return context.Products
@@ -32,6 +44,13 @@ namespace StoreWebApp.Data.Repositories
                 .SingleOrDefault();
         }
 
+        /// <summary>
+        /// Updates the inventory for a particular product 
+        /// based on the quantity that a recent order has purchased
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="id"></param>
+        /// <param name="quant"></param>
         public void UpdateInventory(StoreAppContext context, int id, int quant)
         {
             var product = context.Products
@@ -41,6 +60,11 @@ namespace StoreWebApp.Data.Repositories
             context.SaveChanges();
         }
 
+        /// <summary>
+        /// Get all the product/store data from the DB
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
         public async Task<IEnumerable<Product>> GetProductData(StoreAppContext context)
         {
             return await context.Products

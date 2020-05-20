@@ -15,12 +15,24 @@ namespace StoreWebApp.Data.Repositories
 
     public class OrderRepo : IOrderRepo
     {
+        /// <summary>
+        /// Get all the orders within the DB
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
         public IQueryable<Order> GetOrders(StoreAppContext context)
         {
             return from o in context.Orders
                    select o;
         }
 
+        /// <summary>
+        /// Get all the order/customer/product data for a given order
+        /// using the incoming id
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<Order> GetOrderDetails(StoreAppContext context, int id)
         {
             return await context.Orders

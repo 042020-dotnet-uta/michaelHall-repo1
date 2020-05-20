@@ -17,13 +17,17 @@ namespace StoreWebApp.Controllers
         private readonly StoreAppContext _context;
         private readonly ILogger<CustomersController> _logger;
 
+        /// <summary>
+        /// Constructor for setting up the DB context and logger within the controller
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="logger"></param>
         public CustomersController(StoreAppContext context, ILogger<CustomersController> logger)
         {
             _context = context;
             _logger = logger;
         }
 
-        // GET: Customers
         public async Task<IActionResult> Index(string firstName, string lastName, string userName)
         {
             var customers = from c in _context.Customers
