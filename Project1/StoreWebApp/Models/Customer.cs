@@ -31,7 +31,7 @@ namespace StoreWebApp.Models
         public string UserName { get; set; }
 
         [Display(Name = "Password")]
-        [StringLength(30, MinimumLength = 8)]
+        [StringLength(30, MinimumLength = 6)]
         [Required]
         public string Password { get; set; }
         public ICollection<Order> Orders;

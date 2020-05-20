@@ -28,28 +28,112 @@ namespace StoreWebApp.Controllers
             _logger = logger;
         }
 
+        /// <summary>
+        /// Default page for customers that returns the index view and 
+        /// is able to search through the customers by name/username
+        /// </summary>
+        /// <param name="firstName"></param>
+        /// <param name="lastName"></param>
+        /// <param name="userName"></param>
+        /// <returns></returns>
         public async Task<IActionResult> Index(string firstName, string lastName, string userName)
         {
-            var customers = from c in _context.Customers
-                            select c;
+            var query = new CustomerRepo();
+            try
+            {
+                var customers = query.GetCustomers(_context);
 
-            if (!String.IsNullOrEmpty(firstName))
-            {
-                customers = customers.Where(s => s.FirstName.Contains(firstName));
+                if (!String.IsNullOrEmpty(firstName))
+                {
+                    customers = query.SearchFirstName(customers, firstName);
+                }
+                if (!String.IsNullOrEmpty(lastName))
+                {
+                    customers = query.SearchLastName(customers, lastName);
+                }
+                if (!String.IsNullOrEmpty(userName))
+                {
+                    customers = query.SearchUserName(customers, userName);
+                }
+
+                return View(await customers.ToListAsync());
             }
-            if (!String.IsNullOrEmpty(lastName))
+            catch (Exception ex)
             {
-                customers = customers.Where(s => s.FirstName.Contains(lastName));
-            }
-            if (!String.IsNullOrEmpty(userName))
-            {
-                customers = customers.Where(s => s.FirstName.Contains(userName));
+                _logger.LogInformation(ex, "Wasn't able to search through customers.");
             }
 
-            return View(await customers.ToListAsync());
-            //return View(await _context.Customers.ToListAsync());
+            return RedirectToAction(nameof(Index));
         }
 
+        /// <summary>
+        /// Get method for creating a new customer
+        /// </summary>
+        /// <returns></returns>
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        // POST: Customers/Create
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
+        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        /// <summary>
+        /// Post method for creating a new customer, checks for validation and antiforgery token
+        /// redirects to the index once the customer is made
+        /// </summary>
+        /// <param name="customer"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create([Bind("Id,FirstName,LastName,UserName,Password")] Customer customer)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Add(customer);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                catch(Exception ex)
+                {
+                    _logger.LogInformation(ex, "Wasn't able to create the customer.");
+                }   
+            }
+            return View(customer);
+        }
+
+        // GET: Customers/Details/5
+        /// <summary>
+        /// Goes to the order history page for a specific customer and
+        /// returns to the index if anything goes wrong
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<IActionResult> History(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var repo = new CustomerRepo();
+
+            try
+            {
+                var customerHistory = await repo.GetCustomerHistory(_context, (int)id);
+                return View(customerHistory);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInformation(ex, "Wasn't able to get the customer history.");
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        /*
         // GET: Customers
         public async Task<IActionResult> Search(string firstName, string lastName, string userName)
         {
@@ -79,51 +163,6 @@ namespace StoreWebApp.Controllers
             }
 
             return RedirectToAction(nameof(Search));
-        }
-
-        // GET: Customers/Details/5
-        public async Task<IActionResult> History(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var repo = new CustomerRepo();
-
-            try
-            {
-                var customerHistory = await repo.GetCustomerHistory(_context, (int)id);
-                return View(customerHistory);
-            }
-            catch(Exception ex)
-            {
-                _logger.LogInformation(ex, "Wasn't able to get the customer history.");
-            }
-
-            return RedirectToAction(nameof(Search));
-        }
-
-        // GET: Customers/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: Customers/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,FirstName,LastName,UserName,Password")] Customer customer)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Add(customer);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(customer);
         }
 
         // GET: Customers/Edit/5
@@ -210,5 +249,6 @@ namespace StoreWebApp.Controllers
         {
             return _context.Customers.Any(e => e.Id == id);
         }
+        */
     }
 }
