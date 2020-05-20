@@ -27,7 +27,8 @@
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
-                <input type="submit" value="Add Another Product" class="btn btn-primary" asp-action="Create"/>
+                <input type="submit" value="Add Another Product"
+                       class="btn btn-primary" asp-action="CreateAdd" asp-route-id=@Model.Customer.Id />
             </div>
         </form>
     </div>
