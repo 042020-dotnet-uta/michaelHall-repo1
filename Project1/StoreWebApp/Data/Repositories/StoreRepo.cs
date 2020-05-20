@@ -36,7 +36,7 @@ namespace StoreWebApp.Data.Repositories
         public async Task<IEnumerable<Order>> GetStoreHistory(StoreAppContext context, int id)
         {
             return await context.Orders
-                .Where(o => o.Customer.Id == id)
+                .Where(o => o.Product.Store.Id == id)
                 .Include(o => o.Customer)
                 .Include(o => o.Product)
                 .ThenInclude(p => p.Store)
