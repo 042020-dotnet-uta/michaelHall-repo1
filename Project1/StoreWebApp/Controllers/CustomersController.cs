@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using StoreWebApp.Data;
 using StoreWebApp.Data.Repositories;
 using StoreWebApp.Models;
@@ -14,10 +15,12 @@ namespace StoreWebApp.Controllers
     public class CustomersController : Controller
     {
         private readonly StoreAppContext _context;
+        private readonly ILogger<CustomersController> _logger;
 
-        public CustomersController(StoreAppContext context)
+        public CustomersController(StoreAppContext context, ILogger<CustomersController> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         // GET: Customers
@@ -47,22 +50,31 @@ namespace StoreWebApp.Controllers
         public async Task<IActionResult> Search(string firstName, string lastName, string userName)
         {
             var query = new CustomerRepo();
-            var customers = query.GetCustomers(_context);
+            try
+            {
+                var customers = query.GetCustomers(_context);
 
-            if (!String.IsNullOrEmpty(firstName))
-            {
-                customers = query.SearchFirstName(customers, firstName);
+                if (!String.IsNullOrEmpty(firstName))
+                {
+                    customers = query.SearchFirstName(customers, firstName);
+                }
+                if (!String.IsNullOrEmpty(lastName))
+                {
+                    customers = query.SearchLastName(customers, lastName);
+                }
+                if (!String.IsNullOrEmpty(userName))
+                {
+                    customers = query.SearchUserName(customers, userName);
+                }
+
+                return View(await customers.ToListAsync());
             }
-            if (!String.IsNullOrEmpty(lastName))
+            catch(Exception ex)
             {
-                customers = query.SearchLastName(customers, lastName);
-            }
-            if (!String.IsNullOrEmpty(userName))
-            {
-                customers = query.SearchUserName(customers, userName);
+                _logger.LogInformation(ex, "Wasn't able to search through customers.");
             }
 
-            return View(await customers.ToListAsync());
+            return RedirectToAction(nameof(Search));
         }
 
         // GET: Customers/Details/5
@@ -74,9 +86,18 @@ namespace StoreWebApp.Controllers
             }
 
             var repo = new CustomerRepo();
-            var customerHistory = await repo.GetCustomerHistory(_context, (int)id);
 
-            return View(customerHistory);
+            try
+            {
+                var customerHistory = await repo.GetCustomerHistory(_context, (int)id);
+                return View(customerHistory);
+            }
+            catch(Exception ex)
+            {
+                _logger.LogInformation(ex, "Wasn't able to get the customer history.");
+            }
+
+            return RedirectToAction(nameof(Search));
         }
 
         // GET: Customers/Create

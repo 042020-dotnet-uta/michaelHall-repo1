@@ -8,16 +8,19 @@ using Microsoft.EntityFrameworkCore;
 using StoreWebApp.Data;
 using StoreWebApp.Models;
 using StoreWebApp.Data.Repositories;
+using Microsoft.Extensions.Logging;
 
 namespace StoreWebApp.Controllers
 {
     public class StoresController : Controller
     {
         private readonly StoreAppContext _context;
+        private readonly ILogger<StoresController> _logger;
 
-        public StoresController(StoreAppContext context)
+        public StoresController(StoreAppContext context, ILogger<StoresController> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         // GET: Stores
